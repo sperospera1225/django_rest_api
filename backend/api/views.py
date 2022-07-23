@@ -1,9 +1,24 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 from products.models import Product
 from django.forms.models import model_to_dict
-# Django Model
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(["GET", "POST"])
+def api_rest(request, *args, **kwargs):
+    """
+    DRF API View
+    """
+    model_data = Product.objects.all().order_by("?").first()
+    data = {}
+    if model_data:
+        data = model_to_dict(model_data, fields=['id', 'title'])
+
+    return Response(data)
+
+# Django Model
 def api_product(request, *args, **kwargs):
     model_data = Product.objects.all().order_by("?").first()
     data = {}
@@ -13,8 +28,8 @@ def api_product(request, *args, **kwargs):
     # model instance (model_data)
     # turn a python dictionary
     # return JSON to my client
-
     return JsonResponse(data)
+    # HttpResponse로 보내기 위해서는 복잡한 처리과정이 필요함
 
 
 def api_home(request, *args, **kwargs):
