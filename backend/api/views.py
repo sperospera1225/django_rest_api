@@ -1,10 +1,25 @@
 from django.http import JsonResponse, HttpResponse
 import json
 from products.models import Product
+from products.serializers import ProductSerializer
 from django.forms.models import model_to_dict
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+@api_view(['POST'])
+def api_post(request, *args, **kwargs):
+    """
+    DRF API View
+    """
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        # instance = serializer.save() # save method create instance -> no way to use get_my_discount()
+        print(serializer.data)
+        return Response(serializer.data)
+    return Response({"invalid": "not good data"}, status=400)
+
+
 
 @api_view(["GET", "POST"])
 def api_rest(request, *args, **kwargs):
